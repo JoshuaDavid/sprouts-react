@@ -5,7 +5,7 @@ import SpringySim from './springysim.js';
 
 class App extends React.Component {
     render() {
-        return <SpringySim/>;
+        return null;
     }
 }
 
