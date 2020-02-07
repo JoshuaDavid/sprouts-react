@@ -32,9 +32,43 @@ class Region {
     getColor() {
         return colors[this.id % colors.length];
     }
+
+    isInsideBoundary(x, y, boundary) {
+        var inside = false;
+        for (var i = 0; i < boundary.length - 1; i++) {
+            var {x:x1,y:y1} = boundary[i];
+            var {x:x2,y:y2} = boundary[(i + 1) % boundary.length];
+
+            if ((y1 > y) != (y2 > y)) {
+                var dx = x2 - x1;
+                var dy = y2 - y1;
+                // dy can never be 0 because (y1 > y) != (y2 > y)
+                if (x < x1 + dx * (y - y1) / dy) {
+                    inside = !inside;
+                }
+            }
+        }
+
+        return inside;
+    }
+
+    containsPoint(x, y) {
+        if (this.isInsideBoundary(x, y, this.inclusionBoundary)) {
+            for (var i = 0; i < this.exclusionBoundaries.length; i++) {
+                var eb = this.exclusionBoundaries[i];
+                if (this.isInsideBoundary(x, y, eb)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 var colors = [
+    'white',
     'red',
     'blue',
     'green',

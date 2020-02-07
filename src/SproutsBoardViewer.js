@@ -24,7 +24,6 @@ class SproutsBoardViewer extends React.Component {
             stage: 'ADD_UNCONNECTED',
             selectedSrc: null,
             selectedDst: null,
-            selectedRegion: null,
         };
     }
 
@@ -38,8 +37,45 @@ class SproutsBoardViewer extends React.Component {
     }
 
     handleClick(e) {
+        var {
+            stage,
+            board,
+            selectedSrc,
+            selectedDst,
+        } = this.state;
         var {x, y} = this.getEventXY(e);
-        this.addUnconnectedNode(x, y);
+        if (stage === 'ADD_UNCONNECTED') {
+            this.addUnconnectedNode(x, y);
+        } else if (stage === 'PLAY_GAME') {
+            if (selectedSrc === null) {
+                alert("You must select a start node for your line");
+            } else if (selectedDst === null) {
+                alert("You must select an end node for your line");
+            } else {
+                board.addEdgeWithNode(selectedSrc, selectedDst, x, y);
+                this.setState({
+                    selectedSrc: null,
+                    selectedDst: null,
+                });
+            }
+        }
+    }
+
+    handleNodeClick(e, node) {
+        var {stage} = this.state;
+        if (stage === 'ADD_UNCONNECTED') {
+            alert("Please place your node a bit farther from any existing nodes");
+        } else if (stage === 'PLAY_GAME') {
+            if (node.edges.length >= 3) {
+                alert("A node cannot have more than 3 edges");
+            } else if (this.state.selectedSrc === null) {
+                this.setState({selectedSrc: node});
+            } else if (this.state.selectedDst === null) {
+                this.setState({selectedDst: node});
+            }
+        }
+        e.stopPropagation();
+        e.preventDefault();
     }
 
     advanceToGame() {
@@ -61,7 +97,13 @@ class SproutsBoardViewer extends React.Component {
     }
 
     render() {
-        const {bounds, board, stage} = this.state;
+        const {
+            bounds,
+            board,
+            stage,
+            selectedSrc,
+            selectedDst,
+        } = this.state;
         const {nodes, edges, regions} = board;
 
         return (
@@ -86,20 +128,29 @@ class SproutsBoardViewer extends React.Component {
                             d={region.getPathStr()}
                             fill={region.getColor()}
                         />)}
+                        {edges.map(edge => <polyline
+                            points={edge.getPointsStr()}
+                            style={{
+                                strokeWidth: 0.01,
+                                stroke: 'black',
+                                fill: 'none',
+                            }}
+                        />)}
                         {nodes.map(node => <circle
                             cx={node.x}
                             cy={node.y}
                             r={0.1}
-                        />)}
-                        {edges.map(edge => <line
-                            x1={edge.src.x}
-                            y1={edge.src.y}
-                            x2={edge.dst.x}
-                            y2={edge.dst.y}
                             style={{
-                                strokeWidth: 0.01,
-                                stroke: 'black',
+                                fill: (node === selectedSrc
+                                    ? 'blue'
+                                    : node === selectedDst
+                                    ? 'yellow'
+                                    : node.edges.length >= 3
+                                    ? 'black'
+                                    : 'gray'
+                                ),
                             }}
+                            onClick={e => this.handleNodeClick(e, node)}
                         />)}
                     </g>
                 </svg>

@@ -3,12 +3,14 @@ class Node {
     x;
     y;
     regions;
+    edges;
 
     constructor(x, y, regions) {
         this.x = x;
         this.y = y;
         this.regions = regions;
         this.id = Node.nextId++;
+        this.edges = [];
     }
 }
 
