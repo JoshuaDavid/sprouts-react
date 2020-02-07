@@ -17,7 +17,7 @@ export default class SpringySim extends React.Component {
             damping: 0.95,
         };
 
-           setTimeout(() => {
+        setTimeout(() => {
             this.addNode('a', -1, -1, 'main');
             this.addNode('b', +1, -1, 'main');
             this.addNode('c', -1, +1, 'main');
