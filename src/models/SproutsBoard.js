@@ -50,6 +50,28 @@ class SproutsBoard {
         this.nodes.push(mid);
         this.edges.push(esm);
         this.edges.push(emd);
+        this.maybeSplitRegion(mid);
+    }
+
+    maybeSplitRegion(mid) {
+        var origRegion = mid.regions[0];
+        var l = mid.edges[0].getOtherEnd(mid);
+        var r = mid.edges[1].getOtherEnd(mid);
+        var e1 = l.dfs(r, [mid], node => {
+            return node.regions.filter(r => r === origRegion).length > 0;
+        })
+        if (e1) {
+            e1.unshift(mid);
+            var nr = new Region(e1, []);
+            e1.forEach(node => {
+                node.regions.push(nr);
+                if (node !== l && node !== r && node !== mid) {
+                    node.regions = node.regions.filter(r => r !== origRegion);
+                }
+            });
+            this.regions.push(nr);
+        }
+        console.log(e1);
     }
 }
 

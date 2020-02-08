@@ -1,4 +1,9 @@
 class Edge {
+    id;
+    src;
+    dst;
+    waypoints;
+
     constructor(src, dst, waypoints) {
         this.src = src;
         this.dst = dst;
@@ -12,6 +17,16 @@ class Edge {
         this.waypoints.forEach(({x,y}) => pts.push(x + ',' + y));
         pts.push(this.dst.x + ',' + this.dst.y);
         return pts.join(' ');
+    }
+
+    getOtherEnd(node) {
+        if (this.src === node) {
+            return this.dst;
+        } else if (this.dst === node) {
+            return this.src;
+        } else {
+            throw('not an end of edge');
+        }
     }
 }
 

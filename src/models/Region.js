@@ -25,16 +25,22 @@ class Region {
                 {x: +1000, y: -1000},
             ];
         } else {
-            var boundary = {};
+            var boundary = [];
+            var excludedEdges = []
             for (var i = 0; i < this.boundingNodes.length; i++) {
                 var src = this.boundingNodes[i];
                 var dst = this.boundingNodes[(i+1)%this.boundingNodes.length];
-                var edge = src.getEdgesTo(dst);
                 boundary.push(src);
+                var edge = src.getFirstEdgeTo(dst, excludedEdges);
                 edge.waypoints.forEach(waypoint => boundary.push(waypoint));
+                excludedEdges.push(edge);
             }
             return boundary;
         }
+    }
+
+    addEnclosedRegion(enclosedRegion) {
+        this.enclosedRegions.push(enclosedRegion);
     }
 
     getExclusionBoundaries() {
@@ -97,6 +103,16 @@ class Region {
         } else {
             return false;
         }
+    }
+
+    containsNode(node) {
+        for (var i = 0; i < this.boundingNodes.length; i++) {
+            if (node === this.boundingNodes[i]) {
+                return false;
+            }
+        }
+
+        return this.containsPoint(node.x, node.y);
     }
 }
 
