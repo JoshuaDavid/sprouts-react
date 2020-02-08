@@ -1,11 +1,44 @@
 class Region {
     inclusionBoundary;
     exclusionBoundaries;
+    boundingNodes;
+    enclosedRegions;
 
-    constructor(inclusionBoundary, exclusionBoundaries) {
+    constructor(boundingNodes, enclosedRegions) {
         this.id = Region.nextId++;
-        this.inclusionBoundary = inclusionBoundary;
-        this.exclusionBoundaries = exclusionBoundaries;
+        this.boundingNodes = boundingNodes;
+        this.enclosedRegions = enclosedRegions;
+        this.updateBoundaries()
+    }
+
+    updateBoundaries() {
+        this.inclusionBoundary = this.getInclusionBoundary();
+        this.exclusionBoundaries = this.getExclusionBoundaries();
+    }
+
+    getInclusionBoundary() {
+        if (this.boundingNodes.length == 0) {
+            return [
+                {x: -1000, y: -1000},
+                {x: -1000, y: +1000},
+                {x: +1000, y: +1000},
+                {x: +1000, y: -1000},
+            ];
+        } else {
+            var boundary = {};
+            for (var i = 0; i < this.boundingNodes.length; i++) {
+                var src = this.boundingNodes[i];
+                var dst = this.boundingNodes[(i+1)%this.boundingNodes.length];
+                var edge = src.getEdgesTo(dst);
+                boundary.push(src);
+                edge.waypoints.forEach(waypoint => boundary.push(waypoint));
+            }
+            return boundary;
+        }
+    }
+
+    getExclusionBoundaries() {
+        return this.enclosedRegions.map(region => region.getInclusionBoundary());
     }
 
     getPathStr() {

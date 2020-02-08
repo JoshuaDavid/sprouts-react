@@ -71,7 +71,11 @@ class SproutsBoardViewer extends React.Component {
             } else if (this.state.selectedSrc === null) {
                 this.setState({selectedSrc: node});
             } else if (this.state.selectedDst === null) {
-                this.setState({selectedDst: node});
+                if (this.state.selectedSrc === node && node.edges.length >= 2) {
+                    alert("A node cannot have more than 3 edges");
+                } else {
+                    this.setState({selectedDst: node});
+                }
             }
         }
         e.stopPropagation();
@@ -141,7 +145,9 @@ class SproutsBoardViewer extends React.Component {
                             cy={node.y}
                             r={0.1}
                             style={{
-                                fill: (node === selectedSrc
+                                fill: (node === selectedSrc && node == selectedDst
+                                    ? 'green'
+                                    : node === selectedSrc
                                     ? 'blue'
                                     : node === selectedDst
                                     ? 'yellow'

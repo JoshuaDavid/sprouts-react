@@ -9,12 +9,7 @@ class SproutsBoard {
 
     constructor() {
         this.regions = [
-            new Region([
-                {x: -1000, y: -1000},
-                {x: -1000, y: +1000},
-                {x: +1000, y: +1000},
-                {x: +1000, y: -1000},
-            ], []),
+            new Region([], []),
         ];
         this.nodes = [];
         this.edges = [];

@@ -12,6 +12,18 @@ class Node {
         this.id = Node.nextId++;
         this.edges = [];
     }
+
+    getEdgesTo(other) {
+        var edges = [];
+        for (var i = 0; i < this.edges.length; i++) {
+            var edge = this.edges[i];
+            if (edge.src === other || edge.dst === other) {
+                edges.push(edge);
+            }
+        }
+
+        return edges;
+    }
 }
 
 Node.nextId = 0;
